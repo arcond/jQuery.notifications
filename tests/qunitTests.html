@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+<head>
+	<link rel="stylesheet" href="http://code.jquery.com/qunit/git/qunit.css" type="text/css" media="screen" />
+	<script src="http://code.jquery.com/jquery-latest.js"></script>
+	<script src="http://code.jquery.com/qunit/git/qunit.js"></script>
+	<script src="../src/jquery.notifications.js"></script>
+	<script>
+		$(function() {
+			$.fx.off = true;	// Disable all animations for testing so we can instantly test expected end-states.
+			
+			test('Test defaults', function() {
+				var appendAlerts = true,
+					location = 'bottom',
+					timeout = 0,
+					title = 'Notifications',
+					width = '100px',
+					usesJQueryUI = false;
+					
+				strictEqual($.notifications.defaults.appendAlerts, appendAlerts, 'We expect value to be true');
+				strictEqual($.notifications.defaults.location, location, 'We expect the value to be "bottom"');
+				strictEqual($.notifications.defaults.timeout, timeout, 'We expect the value to be 0');
+				strictEqual($.notifications.defaults.title, title, 'We expect the value to be "Notifications"');
+				strictEqual($.notifications.defaults.width, width, 'We expect the value to be "100px"');
+				strictEqual($.notifications.defaults.usesJQueryUI, usesJQueryUI, 'We expect the value to be false');
+			});
+			
+			module('$.notifications instantiation');
+
+			test('Test creation', function() {
+				var target = $('#qunit-fixture'),
+					secretary = $.notifications(target);
+				
+				ok(secretary, 'created successfully');
+				ok(secretary.area, 'area property exists');
+				ok(secretary.settings, 'settings property exists');
+				ok(secretary.target, 'target property exists');
+				strictEqual(secretary.timerPid, 0, 'timerPid property exists');
+				ok(secretary.clear, 'clear function exists');
+				ok(secretary.notify, 'notify function exists');
+				ok(secretary.toggle, 'toggle function exists');
+				
+				strictEqual(secretary.target, target, 'target is the $(document)');
+			});
+			
+			test('Test new creation', function() {
+				var target = $('#qunit-fixture'),
+					secretary = new $.notifications(target);
+				
+				ok(secretary, 'created successfully');
+				ok(secretary.area, 'area property exists');
+				ok(secretary.settings, 'settings property exists');
+				ok(secretary.target, 'target property exists');
+				strictEqual(secretary.timerPid, 0, 'timerPid property exists');
+				ok(secretary.clear, 'clear function exists');
+				ok(secretary.notify, 'notify function exists');
+				ok(secretary.toggle, 'toggle function exists');
+				
+				strictEqual(secretary.target, target, 'target is the $(document)');
+			});
+			
+			test('Test settings being stored in data', function() {
+				var target = $('#qunit-fixture'),
+					secretary = new $.notifications(target);
+				
+				equal(target.data('notification-settings'), secretary.settings, 'Settings are being stored on the target appropriately');
+			});
+					
+			module('$.notifications methods');
+			
+			test('Test notify method', function() {
+				var target = $('#qunit-fixture'),
+					secretary = new $.notifications(target),
+					text = 'hello test!';
+				
+				equal(secretary.area.has('.notification-message').length, 0, 'area has no notification-message children');
+				
+				secretary.notify(text);
+				ok(secretary.area.has('.notification-message').length, 'area now has notification-message children');
+				strictEqual($(secretary.area.children('.notification-message')[0]).text(), text, 'text is "hello test!"');
+			});
+			
+			test('Test toggle method', function() {				
+				var target = $('#qunit-fixture'),
+					secretary = new $.notifications(target),
+					text = 'hello test!';
+								
+				secretary.notify(text);
+				equal(secretary.area.is(':visible'), true, 'Notifications are visible');
+				
+				secretary.toggle();
+				equal(secretary.area.is(':visible'), false, 'Notifications are hidden');
+			});
+			
+			test('Test clear method', function() {
+				var target = $('#qunit-fixture'),
+					secretary = new $.notifications(target),
+					text = 'hello test!';
+				
+				equal(secretary.area.has('.notification-message').length, 0, 'area has no notification-message children');
+				
+				secretary.notify(text);
+				ok(secretary.area.has('.notification-message').length, 'area now has notification-message children');
+								
+				secretary.clear();				
+				equal(secretary.area.has('.notification-message').length, 0, 'area has no notification-message children again');
+			});
+			
+			module('$([selector]).notifications jQuery integration');
+			
+			test('Test binding to element creation', function() {
+				var target = $('#qunit-fixture');
+				
+				target.notifications();
+				ok(target.has('.notification-area').length, 'Successfully bound to target');
+				
+				target.notifications('notify', 'hello test!');
+				ok($(target.children('.notification-area')[0]).has('.notification-message').length, 'Message posted successfully');
+				
+				target.notifications('clear');
+				equal($(target.children('.notification-area')[0]).has('.notification-message').length, 0, 'Messages cleared successfully');
+				
+				strictEqual(target.data('notification-settings').location, $.notifications.defaults.location, 'Location is set to the default');
+				target.notifications('options', 'location', 'top');
+				strictEqual(target.data('notification-settings').location, 'top', 'Location is set to the default');
+			});
+		});
+	</script>
+</head>
+
+<body>
+	<h1 id="qunit-header">QUnit $.notifications() plugin tests</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture">test markup, will be hidden</div>
+</body>
+</html>

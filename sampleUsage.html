@@ -1,0 +1,37 @@
+<!doctype html />
+<html>
+<head>
+	<title>test</title>
+	<link rel="stylesheet" href="jquery-ui-1.8.16.css" />
+	<style>
+		body { height: 100%; width: 100%; background-color: #fff; }
+		#box1 { height: 50%; width: 50%; background-color: #00f; }
+		#box2 { height: 50%; width: 50%; background-color: #0f0; }
+	</style>
+</head>
+<body>
+	<div id="box1"></div>
+	<div id="box2"></div>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+	<script src="src/jquery.notifications.js"></script>
+	<script>
+		$(function () {
+			$('#box1').notifications({ timeout: 5000, location: 'top-right', usesJQueryUI: true, appendAlerts: false });
+			$('#box1').notifications('notify', 'hello world');
+			$(window).notifications({ usesJQueryUI: true });
+			$(window).notifications('notify', 'hello world');
+			setTimeout(function() {
+				$(window).notifications('notify', 'Second notification!!!');
+			}, 10000);
+			setTimeout(function() {
+				$('#box1').notifications('notify', 'Second notification!!!');
+			}, 15000);
+			setTimeout(function() {
+				var test = new $.notifications($(document), { location: 'top' });
+				test.notify('wooohoooo!!!!');
+			}, 20000);
+		});
+	</script>
+</body>
+</html>
