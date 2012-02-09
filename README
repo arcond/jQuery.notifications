@@ -1,0 +1,19 @@
+This is a simple, lightweight jQuery plug-in designed to easily add notifications to your web site.
+You can apply this to any element or the document or window and anchor the notifications at the top, bottom, or any corner.
+
+defaults are: 
+  appendAlerts: true,     // setting this to false will only ever show 1 alert
+	location: 'bottom',     // can be the following values: 'top', 'bottom', 'top-left', 'top-right', 'bottom-right', 'bottom-left'
+	timeout: 0,             // leave at 0 for no timeout, otherwise set in milliseconds how long to display the notification
+	title: 'Notifications', // Text to appear in title bar
+	width: '100px',         // This only applies when anchored to a corner, 'top' and 'bottom' will always use 100%
+	usesJQueryUI: false     // Optionally adds jQueryUI classes
+
+CSS classes to target:
+  .notification-area    // Style of containing div
+  .notification-title   // Style of title bar
+  .notification-message // Style of each message
+
+Sample Usage:
+  $(window).notificaitons();
+  $(window).notifications('notify', 'hey there!');
